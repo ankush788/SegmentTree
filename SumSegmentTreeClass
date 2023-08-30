@@ -1,0 +1,83 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+class Segment{  
+ vector<int>seg; 
+ public:
+  Segment(int n ){
+     seg.resize( 4*n+1 , 0 ); 
+  }
+//------------------------- builting segment tree--------------------------------------//
+ void builts(vector<int>&arr, int low , int high , int ind  ){
+   if(low == high) {
+    seg[ind] = arr[low]; 
+    return;
+   }
+   int mid = (low + high)/2; 
+ builts( arr, low , mid ,2*ind +1);
+ builts(arr, mid+1 ,high, 2*ind+2); 
+ seg[ind] = seg[2*ind+1] + seg[2*ind +2]; 
+ return; 
+}
+
+//-------------------------query  in segment tree----------------------------// 
+int  query( int low , int high , int l , int r, int ind ){
+ // if out of the range    
+if( low>r or high <l )return 0; 
+// complete
+if( low>= l and high <= r  ){
+     return seg[ind];
+}
+
+// partial 
+    int mid = (low+high)/2; 
+     return (query( low, mid, l, r, 2*ind+1) + query( mid+1, high, l, r, 2*ind+2));
+}
+
+//---------------------------update in segment tree --------------------------------//
+ void update(vector<int>&arr, int low , int high , int ind  ){
+   if(low == high) {
+    seg[ind] = arr[low]; 
+    return; 
+   }
+   int mid = (low + high)/2; 
+ update( arr, low , mid ,2*ind +1);
+ update(arr, mid+1 ,high, 2*ind+2); 
+ seg[ind] = seg[2*ind+1] + seg[2*ind +2]; 
+ return; 
+}
+
+};
+
+//-----------------------int main------------------------------------------// 
+int main()
+{
+
+cout<<" enter the size of of tree "<<endl;
+   int n;
+   cin>>n;
+cout<<"enter the number "<<endl; 
+vector<int>arr(n , 0 );
+for( int i = 0; i<n; i++){
+     cin>>arr[i]; 
+}
+
+Segment s(n); 
+s.builts( arr , 0 , n-1 , 0 );  // building the tree
+
+
+cout<<" enter the range "<<endl; 
+int l , r ;
+ cin>>l>>r; 
+int value = s.query( 0, n-1, l, r, 0); // quering 
+cout<<value<<endl;
+
+cout<<"enter ind to change and value"<<endl; 
+int ind, val ;
+ cin>>ind>>val;
+arr[ind] = val;
+ s.update( arr,0, n-1, 0); //updating 
+
+
+return 0;
+}
