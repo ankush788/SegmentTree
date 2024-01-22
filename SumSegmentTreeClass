@@ -8,42 +8,49 @@ class Segment{
      seg.resize( 4*n+1 , 0 ); 
   }
 //------------------------- builting segment tree--------------------------------------//
- void builts(vector<int>&arr, int low , int high , int ind  ){
+ void builts(vector<int>&arr, int low , int high , int node  ){
    if(low == high) {
-    seg[ind] = arr[low]; 
+    seg[node] = arr[low]; 
     return;
    }
    int mid = (low + high)/2; 
- builts( arr, low , mid ,2*ind +1);
- builts(arr, mid+1 ,high, 2*ind+2); 
- seg[ind] = seg[2*ind+1] + seg[2*ind +2]; 
+ builts( arr, low , mid ,2*node +1);
+ builts(arr, mid+1 ,high, 2*node+2); 
+ seg[node] = seg[2*node+1] + seg[2*node +2]; 
  return; 
 }
 
 //-------------------------query  in segment tree----------------------------// 
-int  query( int low , int high , int l , int r, int ind ){
+int  query( int low , int high , int l , int r, int node ){
  // if out of the range    
 if( low>r or high <l )return 0; 
 // complete
 if( low>= l and high <= r  ){
-     return seg[ind];
+     return seg[node];
 }
 
 // partial 
     int mid = (low+high)/2; 
-     return (query( low, mid, l, r, 2*ind+1) + query( mid+1, high, l, r, 2*ind+2));
+     return (query( low, mid, l, r, 2*node+1) + query( mid+1, high, l, r, 2*node+2));
 }
 
 //---------------------------update in segment tree --------------------------------//
- void update(vector<int>&arr, int low , int high , int ind  ){
+ void update(vector<int>&arr, int low , int high , int node , int index , int val ){
    if(low == high) {
-    seg[ind] = arr[low]; 
+       if( low == index){
+        arr[low] = val;
+        seg[node] = arr[low]; 
+     }
     return; 
    }
    int mid = (low + high)/2; 
- update( arr, low , mid ,2*ind +1);
- update(arr, mid+1 ,high, 2*ind+2); 
- seg[ind] = seg[2*ind+1] + seg[2*ind +2]; 
+     if( index <= mid){
+ update( arr, low , mid ,2*node +1 , index, val);
+     }
+     else{
+ update(arr, mid+1 ,high, 2*node+2 , index , val); 
+     }
+ seg[node] = seg[2*node+1] + seg[2*node +2]; 
  return; 
 }
 
@@ -76,8 +83,10 @@ cout<<"enter ind to change and value"<<endl;
 int ind, val ;
  cin>>ind>>val;
 arr[ind] = val;
- s.update( arr,0, n-1, 0); //updating 
-
+ s.update( arr,0, n-1, 0 , ind , val); //updating 
+ for(auto it : arr){
+     cout<<it<<endl; 
+ }
 
 return 0;
 }
