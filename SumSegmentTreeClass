@@ -41,7 +41,9 @@ public:
 
     void update(int node, int i, int j, int index, int value) {
         if (i == j) {
+            if(i == index){
             tree[node] = value;
+             }
             return;
         }
 
